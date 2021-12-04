@@ -3,7 +3,7 @@ from libtrust.keys.ec_key import ECPublicKey, ECPrivateKey
 from libtrust.jsonsign import JSONSignature
 from libtrust.keys import rs_key, ec_key
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 
 
 __all__ = [
