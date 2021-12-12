@@ -55,7 +55,7 @@ class ECPublicKey:
         )
 
     @classmethod
-    def from_pem(cls, pem: Union[str, bytes]) -> "RSAPublicKey":
+    def from_pem(cls, pem: Union[str, bytes]) -> "ECPublicKey":
         if isinstance(pem, str):
             pem = pem.encode()
         return cls(serialization.load_pem_public_key(pem, default_backend()))

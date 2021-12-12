@@ -88,7 +88,7 @@ class PublicKey(Protocol):
         """
 
 
-class PrivateKey(PublicKey):
+class PrivateKey(PublicKey, Protocol):
     def public_key(self) -> "PublicKey":
         ...
 

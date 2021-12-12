@@ -1,4 +1,4 @@
-# libtrust - Yet another docker/libtrust implement by python.
+# py-libtrust - Yet another docker/libtrust implement by python.
 
 Libtrust is library for managing authentication and authorization using public key cryptography.
 
@@ -70,7 +70,7 @@ assert json.loads(pretty_signature)["author"] == "shabbywu(shabbywu@qq.com)"
 
 ## Copyright and license
 
-Code and documentation copyright 2021 shabbywu(shabbywu@qq.com).
+Code and documentation copyright 2021 shabbywu(shabbywu@qq.com).   
 Code released under the Apache 2.0 license.
 
 ## Reference

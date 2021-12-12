@@ -16,8 +16,8 @@ from libtrust.utils import (
 )
 from cryptography.hazmat.primitives import hashes
 from cryptography import x509
-from cryptography.hazmat.primitives.asymmetric.ec import EllipticCurvePublicKey
-from cryptography.hazmat.primitives.asymmetric.rsa import RSAPublicKey
+from cryptography.hazmat.primitives.asymmetric import ec
+from cryptography.hazmat.primitives.asymmetric import rsa
 from libtrust.keys.ec_key import ECPublicKey
 from libtrust.keys.rs_key import RSAPublicKey
 from libtrust.exceptions import InvalidJSONContent, MissingSignatureKey
@@ -70,6 +70,8 @@ class JSONSignature:
             # indent = 3, is the magic number from
             # https://github.com/distribution/distribution/blob/main/vendor/github.com/docker/libtrust/jsonsign.go#L450
             content = json_dumps(content, indent=3)
+
+        assert isinstance(content, str)
 
         indent = detect_json_indent(content)
         payload = jose_base64_url_encode(content)
@@ -125,14 +127,15 @@ class JSONSignature:
     def verify(self) -> List[PublicKey]:
         keys = []
         for sign in self.signatures:
+            key: PublicKey
             if sign.header.chain:
                 cert_bytes = base64.b64decode(sign.header.chain[0].encode())
                 cert = x509.load_der_x509_certificate(cert_bytes)
                 crypto_public_key = cert.public_key()
 
-                if isinstance(crypto_public_key, RSAPublicKey):
+                if isinstance(crypto_public_key, rsa.RSAPublicKey):
                     key = RSAPublicKey(crypto_public_key)
-                elif isinstance(crypto_public_key, EllipticCurvePublicKey):
+                elif isinstance(crypto_public_key, ec.EllipticCurvePublicKey):
                     key = ECPublicKey(crypto_public_key)
                 else:
                     raise Exception("UnSupport cert type")
@@ -183,7 +186,7 @@ class JSONSignature:
         payload = jose_base64_url_decode(jws["payload"]).decode()
         return cls.new(payload, *jws.get("signatures", []))
 
-    def to_pretty_signature(self, signature_key: Optional[str] = "signatures") -> str:
+    def to_pretty_signature(self, signature_key: str = "signatures") -> str:
         """formats a json signature into an easy to read single json serialized object.
         :param signature_key: The Key of signatures in json object.
         :return:
