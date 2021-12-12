@@ -23,7 +23,7 @@ if os.path.exists(readme_path):
 setup(
     long_description=readme,
     name="py-libtrust",
-    version="1.0.2",
+    version="1.0.3",
     description="Yet another docker/libtrust implement by python.",
     python_requires=">=3.6",
     project_urls={

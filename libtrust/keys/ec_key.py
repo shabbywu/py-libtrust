@@ -27,6 +27,8 @@ class ECPublicKey:
     """
 
     def __init__(self, key: ec.EllipticCurvePublicKey):
+        if not isinstance(key, ec.EllipticCurvePublicKey):
+            raise ValueError("`key` is not a EllipticCurvePublicKey")
         self._public_key = key
 
     def __eq__(self, other):
@@ -148,6 +150,8 @@ class ECPrivateKey(ECPublicKey):
     """
 
     def __init__(self, key: ec.EllipticCurvePrivateKeyWithSerialization):
+        if not isinstance(key, ec.EllipticCurvePrivateKeyWithSerialization):
+            raise ValueError("`key` is not a EllipticCurvePrivateKeyWithSerialization")
         super(ECPrivateKey, self).__init__(key.public_key())
         self._private_key = key
 

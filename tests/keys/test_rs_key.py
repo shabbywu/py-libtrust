@@ -1,5 +1,6 @@
 import pytest
 from libtrust.keys.rs_key import RSAPrivateKey, RSAPublicKey, generate_private_key
+from libtrust.keys.ec_key import generate_private_key as generate_ec_private_key
 
 
 class TestCase:
@@ -53,3 +54,10 @@ class TestCase:
         other_pub = RSAPublicKey.from_pem(one_pub.to_pem())
 
         assert one_pub.to_jwk() == other_pub.to_jwk()
+
+    def test_value_error(self):
+        with pytest.raises(ValueError):
+            RSAPrivateKey.from_pem(generate_ec_private_key().to_pem())
+
+        with pytest.raises(ValueError):
+            RSAPublicKey.from_pem(generate_ec_private_key().public_key().to_pem())

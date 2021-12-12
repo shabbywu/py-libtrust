@@ -23,6 +23,8 @@ class RSAPublicKey:
     """
 
     def __init__(self, key: rsa.RSAPublicKey):
+        if not isinstance(key, rsa.RSAPublicKey):
+            raise ValueError("`key` is not a RSAPublicKey")
         self._public_key = key
 
     def __eq__(self, other):
@@ -117,6 +119,8 @@ class RSAPrivateKey(RSAPublicKey):
     """
 
     def __init__(self, key: rsa.RSAPrivateKeyWithSerialization):
+        if not isinstance(key, rsa.RSAPrivateKeyWithSerialization):
+            raise ValueError("`key` is not a RSAPrivateKey")
         super().__init__(key.public_key())
         self._private_key = key
 
