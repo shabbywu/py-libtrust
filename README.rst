@@ -1,6 +1,9 @@
+.. role:: raw-html-m2r(raw)
+   :format: html
 
-libtrust - Yet another docker/libtrust implement by python.
-===========================================================
+
+py-libtrust - Yet another docker/libtrust implement by python.
+==============================================================
 
 Libtrust is library for managing authentication and authorization using public key cryptography.
 
@@ -82,7 +85,7 @@ Serialize/Deserialize a self-signed JSON signature
 Copyright and license
 ---------------------
 
-Code and documentation copyright 2021 shabbywu(shabbywu@qq.com).
+Code and documentation copyright 2021 shabbywu(shabbywu@qq.com).\ :raw-html-m2r:`<br>`
 Code released under the Apache 2.0 license.
 
 Reference

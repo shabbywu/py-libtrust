@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "py-libtrust"
-version = "1.0.3"
+version = "1.0.4"
 description = "Yet another docker/libtrust implement by python."
 license = "Apache-2.0"
 authors = ["shabbywu <shabbywu@qq.com>"]
@@ -15,8 +15,8 @@ packages = [
 
 [tool.poetry.dependencies]
 python = ">=3.6"
-cryptography = ">=3.0.0"
-typing-extensions = "^4.0.1"
+cryptography = ">= 3.0.0"
+typing-extensions = ">= 3.6.5"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
