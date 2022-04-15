@@ -1,10 +1,10 @@
-from typing import Dict, Union, TYPE_CHECKING, BinaryIO, Tuple
+from typing import TYPE_CHECKING, BinaryIO, Dict, Tuple, Union
+
 from typing_extensions import Protocol
 
-
 if TYPE_CHECKING:
-    from cryptography.hazmat.primitives.asymmetric import ec, rsa
     from cryptography.hazmat.primitives import hashes
+    from cryptography.hazmat.primitives.asymmetric import ec, rsa
 
 
 class PublicKey(Protocol):
@@ -58,7 +58,7 @@ class PublicKey(Protocol):
 
     def crypto_public_key(
         self,
-    ) -> Union["ec.EllipticCurvePublicKey", "rsa.RSAPublicKey"]:
+    ) -> "Union[ec.EllipticCurvePublicKey, rsa.RSAPublicKey]":
         """
         returns the internal object which can be used as a
         crypto.PublicKey for use with other standard library operations. The type
@@ -66,14 +66,7 @@ class PublicKey(Protocol):
         :return:
         """
 
-    def verify(
-        self,
-        buffer: BinaryIO,
-        alg: str,
-        signature: bytes,
-        *,
-        raise_exception: bool = True
-    ) -> bool:
+    def verify(self, buffer: BinaryIO, alg: str, signature: bytes, *, raise_exception: bool = True) -> bool:
         """
         verify the signature of the data in the buffer using this Public Key.
         The alg parameter should identify the digital signature algorithm
@@ -102,9 +95,7 @@ class PrivateKey(PublicKey, Protocol):
         :return:
         """
 
-    def sign(
-        self, buffer: BinaryIO, hash_id: "hashes.HashAlgorithm"
-    ) -> Tuple[bytes, str]:
+    def sign(self, buffer: BinaryIO, hash_id: "hashes.HashAlgorithm") -> Tuple[bytes, str]:
         """
         signs the data read from the buffer using a signature algorithm
         supported by the private key. If the specified hashing algorithm is

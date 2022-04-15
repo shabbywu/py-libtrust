@@ -1,6 +1,7 @@
 import pytest
-from libtrust.keys.rs_key import RSAPrivateKey, RSAPublicKey, generate_private_key
+
 from libtrust.keys.ec_key import generate_private_key as generate_ec_private_key
+from libtrust.keys.rs_key import RSAPrivateKey, RSAPublicKey, generate_private_key
 
 
 class TestCase:

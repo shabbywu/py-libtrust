@@ -1,16 +1,12 @@
-from typing import Dict, Type, BinaryIO, Union, Optional
+from typing import BinaryIO, Dict, Optional, Type, Union
 
 from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import hashes, serialization
+from cryptography.hazmat.primitives.asymmetric import padding, rsa
 from cryptography.utils import int_to_bytes
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric import padding
-from cryptography.hazmat.primitives.asymmetric import rsa
-from libtrust.keys.utils import (
-    encode_key_id_from_crypto_key,
-)
-from libtrust.utils import jose_base64_url_encode, jose_base64_url_decode
 
+from libtrust.keys.utils import encode_key_id_from_crypto_key
+from libtrust.utils import jose_base64_url_decode, jose_base64_url_encode
 
 __all__ = ["RSAPublicKey", "RSAPrivateKey", "generate_private_key"]
 
@@ -30,10 +26,7 @@ class RSAPublicKey:
     def __eq__(self, other):
         if not isinstance(other, RSAPublicKey):
             return False
-        return (
-            self.crypto_public_key().public_numbers()
-            == other.crypto_public_key().public_numbers()
-        )
+        return self.crypto_public_key().public_numbers() == other.crypto_public_key().public_numbers()
 
     @classmethod
     def key_type(cls) -> str:
@@ -127,10 +120,7 @@ class RSAPrivateKey(RSAPublicKey):
     def __eq__(self, other):
         if not isinstance(other, RSAPrivateKey):
             return False
-        return (
-            self.crypto_private_key().private_numbers()
-            == other.crypto_private_key().private_numbers()
-        )
+        return self.crypto_private_key().private_numbers() == other.crypto_private_key().private_numbers()
 
     def public_key(self) -> RSAPublicKey:
         return RSAPublicKey(self.crypto_public_key())
@@ -150,9 +140,7 @@ class RSAPrivateKey(RSAPublicKey):
         )
 
     @classmethod
-    def from_pem(
-        cls, pem: Union[str, bytes], password: Optional[bytes] = None
-    ) -> "RSAPrivateKey":
+    def from_pem(cls, pem: Union[str, bytes], password: Optional[bytes] = None) -> "RSAPrivateKey":
         if isinstance(pem, str):
             pem = pem.encode()
         return cls(serialization.load_pem_private_key(pem, password, default_backend()))
@@ -182,9 +170,7 @@ class RSAPrivateKey(RSAPublicKey):
         iqmp = int.from_bytes(jose_base64_url_decode(jwk["qi"]), "big")
 
         return cls(
-            rsa.RSAPrivateNumbers(
-                p, q, d, dmp1, dmq1, iqmp, rsa.RSAPublicNumbers(e, n)
-            ).private_key(default_backend())
+            rsa.RSAPrivateNumbers(p, q, d, dmp1, dmq1, iqmp, rsa.RSAPublicNumbers(e, n)).private_key(default_backend())
         )
 
     def sign(self, buffer, hash_id):
@@ -214,9 +200,5 @@ _hash_algorithm_maps: Dict[str, hashes.HashAlgorithm] = {
 }
 
 
-def generate_private_key(
-    key_size: int = 2048, public_exponent: int = 65537
-) -> RSAPrivateKey:
-    return RSAPrivateKey(
-        rsa.generate_private_key(public_exponent, key_size, default_backend())
-    )
+def generate_private_key(key_size: int = 2048, public_exponent: int = 65537) -> RSAPrivateKey:
+    return RSAPrivateKey(rsa.generate_private_key(public_exponent, key_size, default_backend()))

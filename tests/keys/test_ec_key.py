@@ -1,4 +1,5 @@
 import pytest
+
 from libtrust.keys.ec_key import ECPrivateKey, ECPublicKey, generate_private_key
 from libtrust.keys.rs_key import generate_private_key as generate_rsa_private_key
 

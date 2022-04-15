@@ -1,5 +1,7 @@
 import datetime
+
 import pytest
+
 from libtrust.jsonsign import JSONSignature
 from libtrust.keys.ec_key import ECPrivateKey
 from libtrust.keys.rs_key import RSAPrivateKey
@@ -72,9 +74,7 @@ class TestCase:
         assert js1 == js2
         assert js1.verify()
 
-    def test_pretty_signature(
-        self, django_example_manifest, django_example_manifest_no_indent
-    ):
+    def test_pretty_signature(self, django_example_manifest, django_example_manifest_no_indent):
         js = JSONSignature.from_pretty_signature(django_example_manifest)
         assert js.verify()
 
@@ -82,7 +82,4 @@ class TestCase:
         assert pretty_signature == django_example_manifest
 
         js.indent = 0
-        assert (
-            js.to_pretty_signature(signature_key="signatures")
-            == django_example_manifest_no_indent
-        )
+        assert js.to_pretty_signature(signature_key="signatures") == django_example_manifest_no_indent

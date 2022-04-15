@@ -1,14 +1,12 @@
 import base64
 from typing import TYPE_CHECKING, Union
-from cryptography.utils import int_to_bytes
 
 from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives import serialization
-
+from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric.ec import EllipticCurve
-from libtrust.utils import jose_base64_url_decode, jose_base64_url_encode
+from cryptography.utils import int_to_bytes
 
+from libtrust.utils import jose_base64_url_decode, jose_base64_url_encode
 
 if TYPE_CHECKING:
     try:
@@ -25,9 +23,7 @@ def encode_key_id_from_crypto_key(pub_key: "PUBLIC_KEY_TYPES") -> str:
     :param pub_key:
     :return:
     """
-    der_bytes = pub_key.public_bytes(
-        serialization.Encoding.DER, serialization.PublicFormat.SubjectPublicKeyInfo
-    )
+    der_bytes = pub_key.public_bytes(serialization.Encoding.DER, serialization.PublicFormat.SubjectPublicKeyInfo)
     hasher = hashes.Hash(hashes.SHA256(), default_backend())
     hasher.update(der_bytes)
     hash_bytes = hasher.finalize()
@@ -55,9 +51,7 @@ def encode_ec_coordinate(coordinate: int, curve: EllipticCurve) -> str:
     """Encode ec.coordinate x/y/d to base64 encoded str"""
     octet_length = (curve.key_size + 7) >> 3
     coordinate_bytes = int_to_bytes(coordinate)
-    coordinate_bytes = (
-        b"\x00" * (octet_length - len(coordinate_bytes)) + coordinate_bytes
-    )
+    coordinate_bytes = b"\x00" * (octet_length - len(coordinate_bytes)) + coordinate_bytes
     return jose_base64_url_encode(coordinate_bytes)
 
 
@@ -67,8 +61,6 @@ def decode_ec_coordinate(coordinate_str: str, curve: EllipticCurve) -> int:
     coordinate_bytes = jose_base64_url_decode(coordinate_str)
 
     if octet_length != len(coordinate_bytes):
-        raise Exception(
-            f"invalid number of octets: got {len(coordinate_bytes)}, should be {octet_length}"
-        )
+        raise Exception(f"invalid number of octets: got {len(coordinate_bytes)}, should be {octet_length}")
 
     return int.from_bytes(coordinate_bytes, "big")

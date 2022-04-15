@@ -1,20 +1,12 @@
-from typing import Dict, Type, BinaryIO, Union, Optional
+from typing import BinaryIO, Dict, Optional, Type, Union
 
 from cryptography.hazmat.backends import default_backend
-from cryptography.utils import int_to_bytes
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import ec
-from cryptography.hazmat.primitives.asymmetric.utils import (
-    encode_dss_signature,
-    decode_dss_signature,
-)
-from libtrust.keys.utils import (
-    encode_key_id_from_crypto_key,
-    encode_ec_coordinate,
-    decode_ec_coordinate,
-)
+from cryptography.hazmat.primitives.asymmetric.utils import decode_dss_signature, encode_dss_signature
+from cryptography.utils import int_to_bytes
 
+from libtrust.keys.utils import decode_ec_coordinate, encode_ec_coordinate, encode_key_id_from_crypto_key
 
 __all__ = ["ECPublicKey", "ECPrivateKey", "generate_private_key"]
 
@@ -34,10 +26,7 @@ class ECPublicKey:
     def __eq__(self, other):
         if not isinstance(other, ECPublicKey):
             return False
-        return (
-            self.crypto_public_key().public_numbers()
-            == other.crypto_public_key().public_numbers()
-        )
+        return self.crypto_public_key().public_numbers() == other.crypto_public_key().public_numbers()
 
     @classmethod
     def key_type(cls) -> str:
@@ -88,9 +77,7 @@ class ECPublicKey:
         x = decode_ec_coordinate(jwk["x"], curve)
         y = decode_ec_coordinate(jwk["y"], curve)
 
-        return cls(
-            ec.EllipticCurvePublicNumbers(x, y, curve).public_key(default_backend())
-        )
+        return cls(ec.EllipticCurvePublicNumbers(x, y, curve).public_key(default_backend()))
 
     def verify(
         self,
@@ -110,9 +97,7 @@ class ECPublicKey:
 
         expected_octet_length = 2 * ((crypto_public_key.curve.key_size + 7) >> 3)
         if expected_octet_length != len(signature):
-            raise Exception(
-                f"signature length is {len(signature)} octets long, should be {expected_octet_length}"
-            )
+            raise Exception(f"signature length is {len(signature)} octets long, should be {expected_octet_length}")
 
         sig_length = len(signature)
         r_bytes, s_bytes = signature[: sig_length // 2], signature[sig_length // 2 :]
@@ -158,10 +143,7 @@ class ECPrivateKey(ECPublicKey):
     def __eq__(self, other):
         if not isinstance(other, ECPrivateKey):
             return False
-        return (
-            self.crypto_private_key().private_numbers()
-            == other.crypto_private_key().private_numbers()
-        )
+        return self.crypto_private_key().private_numbers() == other.crypto_private_key().private_numbers()
 
     def public_key(self) -> ECPublicKey:
         return ECPublicKey(self.crypto_public_key())
@@ -181,9 +163,7 @@ class ECPrivateKey(ECPublicKey):
         )
 
     @classmethod
-    def from_pem(
-        cls, pem: Union[str, bytes], password: Optional[bytes] = None
-    ) -> "ECPrivateKey":
+    def from_pem(cls, pem: Union[str, bytes], password: Optional[bytes] = None) -> "ECPrivateKey":
         if isinstance(pem, str):
             pem = pem.encode()
         return cls(serialization.load_pem_private_key(pem, password, default_backend()))
@@ -210,9 +190,9 @@ class ECPrivateKey(ECPublicKey):
         d = decode_ec_coordinate(jwk["d"], curve)
 
         return cls(
-            ec.EllipticCurvePrivateNumbers(
-                d, ec.EllipticCurvePublicNumbers(x, y, curve)
-            ).private_key(default_backend())
+            ec.EllipticCurvePrivateNumbers(d, ec.EllipticCurvePublicNumbers(x, y, curve)).private_key(
+                default_backend()
+            )
         )
 
     def sign(self, buffer: BinaryIO, hash_id: hashes.HashAlgorithm):
@@ -243,9 +223,7 @@ _curves_map_to_curve_names: Dict[Type[ec.EllipticCurve], str] = {
     ec.SECP384R1: "P-384",
     ec.SECP521R1: "P-521",
 }
-_curve_names_map_to_curves: Dict[str, Type[ec.EllipticCurve]] = {
-    v: k for k, v in _curves_map_to_curve_names.items()
-}
+_curve_names_map_to_curves: Dict[str, Type[ec.EllipticCurve]] = {v: k for k, v in _curves_map_to_curve_names.items()}
 
 _curve_names_map_to_alg: Dict[str, str] = {
     "P-256": "ES256",

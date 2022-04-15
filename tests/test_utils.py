@@ -1,15 +1,10 @@
 import base64
 import json
+from operator import eq, ne
 
 import pytest
-from operator import eq, ne
-from libtrust.utils import (
-    jose_base64_url_decode,
-    jose_base64_url_encode,
-    last_index,
-    not_space,
-    detect_json_indent,
-)
+
+from libtrust.utils import detect_json_indent, jose_base64_url_decode, jose_base64_url_encode, last_index, not_space
 
 
 @pytest.mark.parametrize(
@@ -33,9 +28,7 @@ def test_jose_decode(content):
     ],
 )
 def test_json_encode(content, op):
-    assert op(
-        jose_base64_url_encode(content), base64.urlsafe_b64encode(content).decode()
-    )
+    assert op(jose_base64_url_encode(content), base64.urlsafe_b64encode(content).decode())
 
 
 @pytest.mark.parametrize(

@@ -1,27 +1,27 @@
 import base64
+import datetime
 import io
 import json
-import datetime
+from dataclasses import asdict, dataclass, field, is_dataclass
 from textwrap import indent
-from typing import Dict, List, Optional, Union, Any
-from dataclasses import dataclass, field, is_dataclass, asdict
+from typing import Any, Dict, List, Optional, Union
+
+from cryptography import x509
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.asymmetric import ec, rsa
+
+from libtrust.exceptions import InvalidJSONContent, MissingSignatureKey
+from libtrust.keys.ec_key import ECPublicKey
 from libtrust.keys.protocol import PrivateKey, PublicKey
+from libtrust.keys.rs_key import RSAPublicKey
 from libtrust.utils import (
+    detect_json_indent,
     jose_base64_url_decode,
     jose_base64_url_encode,
-    detect_json_indent,
-    not_space,
-    last_index,
     json_dumps,
+    last_index,
+    not_space,
 )
-from cryptography.hazmat.primitives import hashes
-from cryptography import x509
-from cryptography.hazmat.primitives.asymmetric import ec
-from cryptography.hazmat.primitives.asymmetric import rsa
-from libtrust.keys.ec_key import ECPublicKey
-from libtrust.keys.rs_key import RSAPublicKey
-from libtrust.exceptions import InvalidJSONContent, MissingSignatureKey
-
 
 __all__ = ["JSONSignature"]
 
@@ -93,9 +93,7 @@ class JSONSignature:
             format_tail=format_tail,
         )
         for signature_content in signatures:
-            signature = JsSignature(
-                header=JSHeader(**signature_content.pop("header")), **signature_content
-            )
+            signature = JsSignature(header=JSHeader(**signature_content.pop("header")), **signature_content)
             instance.signatures.append(signature)
         return instance
 
@@ -226,9 +224,7 @@ class JSONSignature:
         return buf.read()
 
     @classmethod
-    def from_pretty_signature(
-        cls, content: str, signature_key: Optional[str] = "signatures"
-    ) -> "JSONSignature":
+    def from_pretty_signature(cls, content: str, signature_key: Optional[str] = "signatures") -> "JSONSignature":
         """
         parses a formatted signature into a JSON signature.
         If the signatures are missing the format information an error is thrown.
@@ -239,8 +235,7 @@ class JSONSignature:
             raise MissingSignatureKey
 
         signatures = [
-            JsSignature(JSHeader(**signature.pop("header")), **signature)
-            for signature in loaded[signature_key]
+            JsSignature(JSHeader(**signature.pop("header")), **signature) for signature in loaded[signature_key]
         ]
 
         format_length = 0
@@ -249,9 +244,7 @@ class JSONSignature:
             protected_header = json.loads(jose_base64_url_decode(signature.protected))
 
             _format_length = protected_header["formatLength"]
-            _format_tail = jose_base64_url_decode(
-                protected_header["formatTail"]
-            ).decode()
+            _format_tail = jose_base64_url_decode(protected_header["formatTail"]).decode()
 
             if format_length and format_length != _format_length:
                 raise

@@ -6,8 +6,8 @@ license = "Apache-2.0"
 authors = ["shabbywu <shabbywu@qq.com>"]
 
 readme = "README.md"
-repository = "https://github.com/shabbywu/libtrust"
-homepage = "https://github.com/shabbywu/libtrust"
+repository = "https://github.com/shabbywu/py-libtrust"
+homepage = "https://github.com/shabbywu/py-libtrust"
 
 packages = [
     {include = "libtrust"}
@@ -25,3 +25,14 @@ pytest-cov = "^3.0.0"
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 119
+skip-string-normalization = 'true'
+
+[tool.isort]
+force_grid_wrap = 0
+include_trailing_comma = true
+line_length = 119
+multi_line_output = 3
+use_parentheses = true

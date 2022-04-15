@@ -1,4 +1,5 @@
 import pytest
+
 from libtrust.keys.ec_key import ECPublicKey
 from libtrust.keys.utils import encode_key_id_from_crypto_key
 
@@ -17,9 +18,4 @@ from libtrust.keys.utils import encode_key_id_from_crypto_key
     ],
 )
 def test_encode_key_id_from_crypto_key(docker_jwk):
-    assert (
-        encode_key_id_from_crypto_key(
-            ECPublicKey.from_jwk(docker_jwk).crypto_public_key()
-        )
-        == docker_jwk["kid"]
-    )
+    assert encode_key_id_from_crypto_key(ECPublicKey.from_jwk(docker_jwk).crypto_public_key()) == docker_jwk["kid"]

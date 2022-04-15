@@ -1,6 +1,6 @@
-import json
 import base64
-from typing import Union, Callable, Any
+import json
+from typing import Any, Callable, Union
 
 
 def json_dumps(obj, **kwargs):
