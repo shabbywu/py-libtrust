@@ -23,12 +23,12 @@ if os.path.exists(readme_path):
 setup(
     long_description=readme,
     name='py-libtrust',
-    version='1.0.4',
+    version='1.0.5',
     description='Yet another docker/libtrust implement by python.',
     python_requires='>=3.6',
     project_urls={
-        "homepage": "https://github.com/shabbywu/libtrust",
-        "repository": "https://github.com/shabbywu/libtrust",
+        "homepage": "https://github.com/shabbywu/py-libtrust",
+        "repository": "https://github.com/shabbywu/py-libtrust",
     },
     author='shabbywu',
     author_email='shabbywu@qq.com',
