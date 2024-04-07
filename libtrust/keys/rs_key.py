@@ -26,7 +26,10 @@ class RSAPublicKey:
     def __eq__(self, other):
         if not isinstance(other, RSAPublicKey):
             return False
-        return self.crypto_public_key().public_numbers() == other.crypto_public_key().public_numbers()
+        return (
+            self.crypto_public_key().public_numbers()
+            == other.crypto_public_key().public_numbers()
+        )
 
     @classmethod
     def key_type(cls) -> str:
@@ -83,19 +86,13 @@ class RSAPublicKey:
         if hash_algorithm is None:
             raise Exception(f"RSA Digital Signature Algorithm {alg} not supported")
 
-        verifier = self.crypto_public_key().verifier(
-            signature,
-            padding.PKCS1v15(),
-            hash_algorithm,
-        )
-        while True:
-            d = buffer.read(1024)
-            if not d:
-                break
-            verifier.update(d)
-
         try:
-            verifier.verify()
+            self.crypto_public_key().verify(
+                signature,
+                buffer.read(),
+                padding.PKCS1v15(),
+                hash_algorithm,
+            )
             return True
         except Exception:
             if raise_exception:
@@ -120,7 +117,10 @@ class RSAPrivateKey(RSAPublicKey):
     def __eq__(self, other):
         if not isinstance(other, RSAPrivateKey):
             return False
-        return self.crypto_private_key().private_numbers() == other.crypto_private_key().private_numbers()
+        return (
+            self.crypto_private_key().private_numbers()
+            == other.crypto_private_key().private_numbers()
+        )
 
     def public_key(self) -> RSAPublicKey:
         return RSAPublicKey(self.crypto_public_key())
@@ -140,7 +140,9 @@ class RSAPrivateKey(RSAPublicKey):
         )
 
     @classmethod
-    def from_pem(cls, pem: Union[str, bytes], password: Optional[bytes] = None) -> "RSAPrivateKey":
+    def from_pem(
+        cls, pem: Union[str, bytes], password: Optional[bytes] = None
+    ) -> "RSAPrivateKey":
         if isinstance(pem, str):
             pem = pem.encode()
         return cls(serialization.load_pem_private_key(pem, password, default_backend()))
@@ -170,20 +172,18 @@ class RSAPrivateKey(RSAPublicKey):
         iqmp = int.from_bytes(jose_base64_url_decode(jwk["qi"]), "big")
 
         return cls(
-            rsa.RSAPrivateNumbers(p, q, d, dmp1, dmq1, iqmp, rsa.RSAPublicNumbers(e, n)).private_key(default_backend())
+            rsa.RSAPrivateNumbers(
+                p, q, d, dmp1, dmq1, iqmp, rsa.RSAPublicNumbers(e, n)
+            ).private_key(default_backend())
         )
 
     def sign(self, buffer, hash_id):
         crypto_algorithm = _alg_maps.get(hash_id, "RS256")
         hash_algorithm = _hash_algorithm_maps[crypto_algorithm]
-        signer = self.crypto_private_key().signer(padding.PKCS1v15(), hash_algorithm)
-        while True:
-            d = buffer.read(1024)
-            if not d:
-                break
-            signer.update(d)
-
-        return signer.finalize(), crypto_algorithm
+        signature = self.crypto_private_key().sign(
+            buffer.read(), padding.PKCS1v15(), hash_algorithm
+        )
+        return signature, crypto_algorithm
 
 
 _alg_maps: Dict[Type[hashes.HashAlgorithm], str] = {
@@ -200,5 +200,9 @@ _hash_algorithm_maps: Dict[str, hashes.HashAlgorithm] = {
 }
 
 
-def generate_private_key(key_size: int = 2048, public_exponent: int = 65537) -> RSAPrivateKey:
-    return RSAPrivateKey(rsa.generate_private_key(public_exponent, key_size, default_backend()))
+def generate_private_key(
+    key_size: int = 2048, public_exponent: int = 65537
+) -> RSAPrivateKey:
+    return RSAPrivateKey(
+        rsa.generate_private_key(public_exponent, key_size, default_backend())
+    )
