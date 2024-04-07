@@ -3,7 +3,7 @@ from libtrust.keys import ec_key, rs_key
 from libtrust.keys.ec_key import ECPrivateKey, ECPublicKey
 from libtrust.keys.rs_key import RSAPrivateKey, RSAPublicKey
 
-__version__ = "1.0.5"
+__version__ = "2.0.0"
 
 
 __all__ = [
